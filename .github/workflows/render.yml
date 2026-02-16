@@ -1,0 +1,17 @@
+name: Render Manim Video
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: 
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: MengAiDev/manim-video-renderer@v1
+        with:
+          file: 'basel.py'
+          scene: 'BaselProblem'
+          quality: '-qh'
