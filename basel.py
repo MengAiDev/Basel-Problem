@@ -38,7 +38,8 @@ class BaselProblemDetailed(Scene):
         self.play(Write(euler), Write(answer))
         self.wait(2)
 
-        self.play(FadeOut(intro), FadeOut(series), FadeOut(basel), FadeOut(euler), FadeOut(answer))
+        # 清屏，只保留标题
+        self.play(*[FadeOut(mob) for mob in [intro, series, basel, euler, answer]])
         self.wait(0.5)
 
         # ------------------- 欧拉的核心思想 -------------------
@@ -62,8 +63,12 @@ class BaselProblemDetailed(Scene):
         self.play(Write(poly_analogy))
         self.wait(2)
 
+        # 清屏，保留标题和idea
+        self.play(*[FadeOut(mob) for mob in [analogy, poly_analogy]])
+        self.wait(0.5)
+
         # ------------------- 1. 泰勒展开 -------------------
-        taylor_title = Text("1. sin x 的泰勒展开", font_size=32, color=PURPLE).next_to(poly_analogy, DOWN, buff=1)
+        taylor_title = Text("1. sin x 的泰勒展开", font_size=32, color=PURPLE).next_to(idea, DOWN, buff=1)
         self.play(Write(taylor_title))
         self.wait(0.5)
 
@@ -74,13 +79,15 @@ class BaselProblemDetailed(Scene):
         self.play(Write(taylor_eq))
         self.wait(2)
 
+        # 坐标轴调整位置：使用 shift 上移，并缩小一点
         axes = Axes(
             x_range=[-3*PI, 3*PI, PI],
             y_range=[-2, 2, 1],
-            x_length=10,
-            y_length=4,
+            x_length=9,
+            y_length=3.5,
             axis_config={"color": BLUE}
-        ).next_to(taylor_eq, DOWN, buff=0.8)
+        ).next_to(taylor_eq, DOWN, buff=0.5)  # 减小 buff 使其更靠近上方公式
+        axes.shift(UP*0.3)  # 再微调上移
 
         sin_graph = axes.plot(lambda x: np.sin(x), color=YELLOW, x_range=[-3*PI, 3*PI])
         sin_label = axes.get_graph_label(sin_graph, label="\\sin x")
@@ -94,6 +101,7 @@ class BaselProblemDetailed(Scene):
         self.play(Create(taylor_1), Create(taylor_3), Create(taylor_5))
         self.wait(2)
 
+        # 清除图形，只保留 taylor_eq
         self.play(FadeOut(axes), FadeOut(sin_graph), FadeOut(sin_label),
                   FadeOut(taylor_1), FadeOut(taylor_3), FadeOut(taylor_5))
 
@@ -104,15 +112,19 @@ class BaselProblemDetailed(Scene):
         self.play(Transform(taylor_eq.copy(), sin_over_x))
         self.wait(2)
 
-        # 强调 x^2 项系数（已修复中文问题）
+        # 强调 x^2 项系数
         x2_coef_text = Text("x² 项的系数：", font_size=36, color=ORANGE)
         x2_coef_formula = MathTex(r"-\frac{1}{3!} = -\frac{1}{6}", font_size=36, color=ORANGE)
         x2_coef_group = VGroup(x2_coef_text, x2_coef_formula).arrange(RIGHT, buff=0.2).next_to(sin_over_x, DOWN, buff=0.5)
         self.play(Write(x2_coef_group))
         self.wait(2)
 
+        # 清屏，保留标题和idea
+        self.play(*[FadeOut(mob) for mob in [taylor_title, taylor_eq, sin_over_x, x2_coef_group]])
+        self.wait(0.5)
+
         # ------------------- 2. 无穷乘积 -------------------
-        product_title = Text("2. sin x 的无穷乘积表示", font_size=32, color=PURPLE).next_to(x2_coef_group, DOWN, buff=1)
+        product_title = Text("2. sin x 的无穷乘积表示", font_size=32, color=PURPLE).next_to(idea, DOWN, buff=1)
         self.play(Write(product_title))
         self.wait(0.5)
 
@@ -160,8 +172,13 @@ class BaselProblemDetailed(Scene):
         self.play(Write(coef_simple))
         self.wait(2)
 
+        # 清屏，保留标题和idea
+        self.play(*[FadeOut(mob) for mob in [product_title, roots_text, roots, roots2_text, roots2,
+                                             product, product_sq, expand_text, term, coef_product, coef_simple]])
+        self.wait(0.5)
+
         # ------------------- 3. 比较系数 -------------------
-        compare_title = Text("3. 比较两种展开的 x² 系数", font_size=32, color=PURPLE).next_to(coef_simple, DOWN, buff=1)
+        compare_title = Text("3. 比较两种展开的 x² 系数", font_size=32, color=PURPLE).next_to(idea, DOWN, buff=1)
         self.play(Write(compare_title))
         self.wait(0.5)
 
@@ -180,12 +197,16 @@ class BaselProblemDetailed(Scene):
         self.play(Write(result))
         self.wait(2)
 
-        # ------------------- 4. 讨论与扩展（改用 Text 避免 LaTeX 中文问题） -------------------
-        discussion_title = Text("欧拉证明的意义与后续发展", font_size=32, color=PURPLE).next_to(result, DOWN, buff=1.2)
+        # 清屏，保留标题和idea
+        self.play(*[FadeOut(mob) for mob in [compare_title, compare_eq, result]])
+        self.wait(0.5)
+
+        # ------------------- 4. 讨论与扩展 -------------------
+        discussion_title = Text("欧拉证明的意义与后续发展", font_size=32, color=PURPLE).next_to(idea, DOWN, buff=1)
         self.play(Write(discussion_title))
         self.wait(0.5)
 
-        # 使用 Text 对象创建带项目符号的列表，最后一条公式用 MathTex 单独处理
+        # 使用 Text 对象创建带项目符号的列表
         point1 = Text("• 欧拉的证明基于大胆的类比，当时缺乏严格性。", font_size=28)
         point2 = Text("• 但结果正确，后来被魏尔斯特拉斯等数学家严格化。", font_size=28)
         point3 = Text("• 这个等式揭示了三角级数与数论的深刻联系。", font_size=28)
@@ -199,11 +220,12 @@ class BaselProblemDetailed(Scene):
         self.wait(4)
 
         final_text = Text(
-            "Thank you!",
+            "欧拉的洞察力令人惊叹！",
             font_size=36,
             color=BLUE
         ).next_to(points, DOWN, buff=1)
         self.play(Write(final_text))
         self.wait(3)
 
+        # 最终清屏
         self.play(*[FadeOut(mob) for mob in self.mobjects])
