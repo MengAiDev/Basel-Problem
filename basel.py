@@ -104,7 +104,7 @@ class BaselProblemDetailed(Scene):
         self.play(Transform(taylor_eq.copy(), sin_over_x))
         self.wait(2)
 
-        # 修复点：将包含中文的 MathTex 拆分为 Text 和 MathTex
+        # 强调 x^2 项系数（已修复中文问题）
         x2_coef_text = Text("x² 项的系数：", font_size=36, color=ORANGE)
         x2_coef_formula = MathTex(r"-\frac{1}{3!} = -\frac{1}{6}", font_size=36, color=ORANGE)
         x2_coef_group = VGroup(x2_coef_text, x2_coef_formula).arrange(RIGHT, buff=0.2).next_to(sin_over_x, DOWN, buff=0.5)
@@ -180,18 +180,20 @@ class BaselProblemDetailed(Scene):
         self.play(Write(result))
         self.wait(2)
 
-        # ------------------- 4. 讨论与扩展 -------------------
+        # ------------------- 4. 讨论与扩展（改用 Text 避免 LaTeX 中文问题） -------------------
         discussion_title = Text("欧拉证明的意义与后续发展", font_size=32, color=PURPLE).next_to(result, DOWN, buff=1.2)
         self.play(Write(discussion_title))
         self.wait(0.5)
 
-        points = BulletedList(
-            "欧拉的证明基于大胆的类比，当时缺乏严格性。",
-            "但结果正确，后来被魏尔斯特拉斯等数学家严格化。",
-            "这个等式揭示了三角级数与数论的深刻联系。",
-            "更一般地，ζ(2n) 与伯努利数有关：ζ(2n) = (-1)^{n+1} (2π)^{2n} B_{2n} / (2(2n)!)",
-            font_size=28
-        ).next_to(discussion_title, DOWN, buff=0.5)
+        # 使用 Text 对象创建带项目符号的列表，最后一条公式用 MathTex 单独处理
+        point1 = Text("• 欧拉的证明基于大胆的类比，当时缺乏严格性。", font_size=28)
+        point2 = Text("• 但结果正确，后来被魏尔斯特拉斯等数学家严格化。", font_size=28)
+        point3 = Text("• 这个等式揭示了三角级数与数论的深刻联系。", font_size=28)
+        point4_text = Text("• 更一般地，ζ(2n) 与伯努利数有关：", font_size=28)
+        point4_formula = MathTex(r"\zeta(2n) = (-1)^{n+1} \frac{(2\pi)^{2n} B_{2n}}{2(2n)!}", font_size=28)
+        point4 = VGroup(point4_text, point4_formula).arrange(RIGHT, buff=0.2)
+        points = VGroup(point1, point2, point3, point4).arrange(DOWN, aligned_edge=LEFT, buff=0.3)
+        points.next_to(discussion_title, DOWN, buff=0.5)
 
         self.play(Write(points))
         self.wait(4)
